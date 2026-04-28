@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Minesweeper</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+    background: #008080;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    user-select: none;
+    -webkit-user-select: none;
+    font-family: 'MS Sans Serif', 'Segoe UI', Arial, sans-serif;
+}
+
+.window {
+    background: #c0c0c0;
+    border: 3px solid;
+    border-color: #dfdfdf #404040 #404040 #dfdfdf;
+    padding: 3px;
+}
+
+.title-bar {
+    background: linear-gradient(to right, #000080, #1084d0);
+    color: #fff;
+    font-size: 11px;
+    font-weight: bold;
+    padding: 2px 4px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 18px;
+    margin-bottom: 3px;
+}
+
+.title-text {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.title-buttons {
+    display: flex;
+    gap: 2px;
+}
+
+.title-btn {
+    width: 14px;
+    height: 12px;
+    background: #c0c0c0;
+    color: #000;
+    border: 1px solid;
+    border-color: #fff #404040 #404040 #fff;
+    font-size: 8px;
+    line-height: 1;
+    cursor: default;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+}
+
+.game-body {
+    padding: 4px;
+}
+
+/* Header panel */
+.panel {
+    background: #c0c0c0;
+    border: 3px solid;
+    border-color: #808080 #dfdfdf #dfdfdf #808080;
+    padding: 5px 6px 5px 6px;
+    margin-bottom: 6px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 37px;
+}
+
+/* Smiley button */
+.smiley-btn {
+    width: 26px;
+    height: 26px;
+    background: #c0c0c0;
+    border: 3px solid;
+    border-color: #dfdfdf #808080 #808080 #dfdfdf;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    line-height: 1;
+    outline: none;
+    padding: 0;
+}
+
+.smiley-btn.pressed {
+    border-color: #808080 #dfdfdf #dfdfdf #808080;
+    padding-top: 2px;
+    padding-left: 2px;
+}
+
+/* Board */
+.board-wrap {
+    border: 3px solid;
+    border-color: #808080 #dfdfdf #dfdfdf #808080;
+    line-height: 0;
+    font-size: 0;
+}
+
+.board {
+    display: grid;
+    grid-template-columns: repeat(9, 16px);
+    grid-template-rows: repeat(9, 16px);
+}
+
+/* Cells */
+.cell {
+    width: 16px;
+    height: 16px;
+    cursor: default;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    font-weight: bold;
+    line-height: 1;
+    box-sizing: border-box;
+    overflow: hidden;
+}
+
+.cell.hidden,
+.cell.flagged,
+.cell.question {
+    background: #c0c0c0;
+    border: 2px solid;
+    border-color: #fff #808080 #808080 #fff;
+    cursor: pointer;
+}
+
+.cell.pressed {
+    border-color: #808080 #c0c0c0 #c0c0c0 #808080 !important;
+    border-width: 1px !important;
+}
+
+.cell.revealed,
+.cell.exploded,
+.cell.wrong {
+    background: #c0c0c0;
+    border: 1px solid;
+    border-color: #808080 #dfdfdf #dfdfdf #808080;
+}
+
+.cell.exploded {
+    background: #ff0000;
+}
+
+/* Number colours */
+.cell.n1 { color: #0000fe; }
+.cell.n2 { color: #017901; }
+.cell.n3 { color: #fe0000; }
+.cell.n4 { color: #010180; }
+.cell.n5 { color: #810102; }
+.cell.n6 { color: #018080; }
+.cell.n7 { color: #000; }
+.cell.n8 { color: #808080; }
+</style>
+</head>
+<body>
+
+<div class="window">
+    <div class="title-bar">
+        <div class="title-text">
+            <span>💣</span>
+            <span>Minesweeper</span>
+        </div>
+        <div class="title-buttons">
+            <div class="title-btn">_</div>
+            <div class="title-btn">□</div>
+            <div class="title-btn">✕</div>
+        </div>
+    </div>
+    <div class="game-body">
+        <div class="panel">
+            <canvas id="lcd-mines" width="41" height="25"></canvas>
+            <button class="smiley-btn" id="smiley-btn"></button>
+            <canvas id="lcd-timer" width="41" height="25"></canvas>
+        </div>
+        <div class="board-wrap">
+            <div class="board" id="board"></div>
+        </div>
+    </div>
+</div>
+
+<script>
+'use strict';
+
+/* ── Fixed board layout ───────────────────────────────────────
+   -1 = mine, 0-8 = adjacent mine count                       */
+const BOARD = [
+    [ 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [ 0, 1, 2, 3, 3, 3, 2, 1, 0],
+    [ 0, 2,-1,-1,-1,-1,-1, 1, 0],
+    [ 0, 3,-1, 7, 6, 6, 4, 2, 0],
+    [ 0, 2,-1,-1,-1,-1,-1, 2, 0],
+    [ 0, 2, 4, 6, 6, 7,-1, 3, 0],
+    [ 0, 1,-1,-1,-1,-1,-1, 2, 0],
+    [ 0, 1, 2, 3, 3, 3, 2, 1, 0],
+    [ 0, 0, 0, 0, 0, 0, 0, 0, 0],
+];
+
+const ROWS = 9, COLS = 9, TOTAL_MINES = 17;
+
+/* ── SVG sprite helpers ───────────────────────────────────── */
+const MINE_SVG = `<svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" viewBox="0 0 11 11">
+  <line x1="5.5" y1="0.5" x2="5.5" y2="10.5" stroke="#000" stroke-width="1.5"/>
+  <line x1="0.5" y1="5.5" x2="10.5" y2="5.5" stroke="#000" stroke-width="1.5"/>
+  <line x1="1.9"  y1="1.9"  x2="9.1" y2="9.1"  stroke="#000" stroke-width="1.5"/>
+  <line x1="9.1"  y1="1.9"  x2="1.9" y2="9.1"  stroke="#000" stroke-width="1.5"/>
+  <circle cx="5.5" cy="5.5" r="3.2" fill="#000"/>
+  <circle cx="4.2" cy="4.2" r="0.9" fill="#fff"/>
+</svg>`;
+
+const FLAG_SVG = `<svg xmlns="http://www.w3.org/2000/svg" width="11" height="13" viewBox="0 0 11 13">
+  <line x1="4" y1="1" x2="4" y2="13" stroke="#000" stroke-width="2"/>
+  <polygon points="4,1 10,4.5 4,8" fill="#f00"/>
+  <line x1="2" y1="13" x2="6" y2="13" stroke="#000" stroke-width="2"/>
+</svg>`;
+
+const WRONG_SVG = `<svg xmlns="http://www.w3.org/2000/svg" width="13" height="14" viewBox="0 0 13 14">
+  <line x1="4" y1="1" x2="4" y2="10" stroke="#000" stroke-width="2"/>
+  <polygon points="4,1 10,4.5 4,8" fill="#f00"/>
+  <line x1="2" y1="10" x2="6" y2="10" stroke="#000" stroke-width="2"/>
+  <line x1="1"  y1="11" x2="12" y2="13.5" stroke="#f00" stroke-width="2"/>
+  <line x1="1"  y1="13.5" x2="12" y2="11" stroke="#f00" stroke-width="2"/>
+</svg>`;
+
+/* ── 7-segment LCD canvas ─────────────────────────────────── */
+const SEG_ON  = '#fe0000';
+const SEG_OFF = '#3a0000';
+const SEG_BG  = '#000';
+
+/*  Segment indices:  a=top  b=top-right  c=bot-right
+                      d=bot  e=bot-left   f=top-left  g=mid  */
+const DIGIT_SEGS = {
+    0: 'abcdef', 1: 'bc',     2: 'abdeg',  3: 'abcdg',
+    4: 'bcfg',   5: 'acdfg',  6: 'acdefg', 7: 'abc',
+    8: 'abcdefg',9: 'abcdfg', '-': 'g'
+};
+
+function drawDigit(ctx, x, y) {
+    /* Each digit occupies 13×23 px; call with the digit value as 3rd arg */
+    const d = arguments[2];
+    const T = 2, SW = 9, SH = 9;
+    const segs = {
+        a: [x+2,       y,         SW, T ],
+        b: [x+2+SW,    y+2,       T,  SH],
+        c: [x+2+SW,    y+SH+3,    T,  SH],
+        d: [x+2,       y+2*SH+4,  SW, T ],
+        e: [x,         y+SH+3,    T,  SH],
+        f: [x,         y+2,       T,  SH],
+        g: [x+2,       y+SH+1,    SW, T ],
+    };
+    const active = new Set(DIGIT_SEGS[d] || '');
+    for (const [name, [sx, sy, sw, sh]] of Object.entries(segs)) {
+        ctx.fillStyle = active.has(name) ? SEG_ON : SEG_OFF;
+        ctx.fillRect(sx, sy, sw, sh);
+    }
+}
+
+function drawLCD(canvasId, value) {
+    const canvas = document.getElementById(canvasId);
+    const ctx = canvas.getContext('2d');
+    ctx.fillStyle = SEG_BG;
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    let digits;
+    if (value < 0) {
+        const abs = Math.min(99, -value);
+        digits = ['-', Math.floor(abs / 10), abs % 10];
+    } else {
+        const v = Math.min(999, value);
+        digits = [Math.floor(v / 100), Math.floor((v % 100) / 10), v % 10];
+    }
+
+    for (let i = 0; i < 3; i++) {
+        drawDigit(ctx, 1 + i * 14, 1, digits[i]);
+    }
+}
+
+/* ── Game state ───────────────────────────────────────────── */
+let states, status, flagCount, seconds, timerHandle, dragCell;
+
+function getEl(r, c)  { return document.getElementById(`c${r}-${c}`); }
+
+function setSmiley(s) {
+    const faces = { smile: '🙂', surprised: '😮', won: '😎', lost: '😵' };
+    document.getElementById('smiley-btn').textContent = faces[s];
+}
+
+function init() {
+    clearInterval(timerHandle);
+    timerHandle = null;
+    states    = Array.from({length: ROWS}, () => Array(COLS).fill('hidden'));
+    status    = 'idle';
+    flagCount = 0;
+    seconds   = 0;
+    dragCell  = null;
+    drawLCD('lcd-mines', TOTAL_MINES);
+    drawLCD('lcd-timer', 0);
+    setSmiley('smile');
+    document.getElementById('smiley-btn').classList.remove('pressed');
+    buildBoard();
+}
+
+function buildBoard() {
+    const board = document.getElementById('board');
+    board.innerHTML = '';
+    for (let r = 0; r < ROWS; r++) {
+        for (let c = 0; c < COLS; c++) {
+            const el = document.createElement('div');
+            el.id = `c${r}-${c}`;
+            el.className = 'cell hidden';
+            el.dataset.r = r;
+            el.dataset.c = c;
+            el.addEventListener('mousedown',    onDown);
+            el.addEventListener('mouseup',      onUp);
+            el.addEventListener('mouseover',    onOver);
+            el.addEventListener('contextmenu',  onRight);
+            board.appendChild(el);
+        }
+    }
+}
+
+function paintCell(r, c) {
+    const el = getEl(r, c);
+    if (!el) return;
+    const s = states[r][c];
+    const v = BOARD[r][c];
+    el.className = 'cell';
+    el.innerHTML = '';
+
+    if (s === 'hidden') {
+        el.classList.add('hidden');
+    } else if (s === 'flagged') {
+        el.classList.add('flagged');
+        el.innerHTML = FLAG_SVG;
+    } else if (s === 'question') {
+        el.classList.add('question');
+        const span = document.createElement('span');
+        span.style.cssText = 'font-size:11px;font-weight:bold;color:#000';
+        span.textContent = '?';
+        el.appendChild(span);
+    } else if (s === 'revealed') {
+        el.classList.add('revealed');
+        if (v === -1) {
+            el.innerHTML = MINE_SVG;
+        } else if (v > 0) {
+            el.classList.add('n' + v);
+            el.textContent = v;
+        }
+    } else if (s === 'exploded') {
+        el.classList.add('exploded');
+        el.innerHTML = MINE_SVG;
+    } else if (s === 'wrong') {
+        el.classList.add('wrong');
+        el.innerHTML = WRONG_SVG;
+    }
+}
+
+/* ── Mouse handlers ────────────────────────────────────────── */
+function onDown(e) {
+    if (status === 'won' || status === 'lost') return;
+    if (e.button !== 0) return;
+    const r = +this.dataset.r, c = +this.dataset.c;
+    const s = states[r][c];
+    if (s === 'hidden' || s === 'question') {
+        dragCell = {r, c};
+        this.classList.add('pressed');
+        setSmiley('surprised');
+    }
+    e.preventDefault();
+}
+
+function onUp(e) {
+    if (status === 'won' || status === 'lost') return;
+    if (e.button !== 0) return;
+    document.getElementById('smiley-btn').classList.remove('pressed');
+    const r = +this.dataset.r, c = +this.dataset.c;
+    if (dragCell && dragCell.r === r && dragCell.c === c) {
+        dragCell = null;
+        this.classList.remove('pressed');
+        if (status !== 'won' && status !== 'lost') setSmiley('smile');
+        doReveal(r, c);
+    }
+}
+
+function onOver(e) {
+    if (!dragCell || status === 'won' || status === 'lost') return;
+    const r = +this.dataset.r, c = +this.dataset.c;
+    const old = getEl(dragCell.r, dragCell.c);
+    if (old) old.classList.remove('pressed');
+    const s = states[r][c];
+    if (s === 'hidden' || s === 'question') {
+        this.classList.add('pressed');
+        dragCell = {r, c};
+    } else {
+        dragCell = null;
+    }
+}
+
+function onRight(e) {
+    e.preventDefault();
+    if (status === 'won' || status === 'lost') return;
+    const r = +this.dataset.r, c = +this.dataset.c;
+    const s = states[r][c];
+    if      (s === 'hidden')   { states[r][c] = 'flagged';  flagCount++; }
+    else if (s === 'flagged')  { states[r][c] = 'question'; flagCount--; }
+    else if (s === 'question') { states[r][c] = 'hidden'; }
+    else return;
+    paintCell(r, c);
+    drawLCD('lcd-mines', TOTAL_MINES - flagCount);
+}
+
+/* ── Reveal logic ─────────────────────────────────────────── */
+function doReveal(r, c) {
+    const s = states[r][c];
+    if (s !== 'hidden' && s !== 'question') return;
+    if (s === 'question') states[r][c] = 'hidden';
+
+    if (status === 'idle') {
+        status = 'playing';
+        timerHandle = setInterval(() => {
+            if (seconds < 999) seconds++;
+            drawLCD('lcd-timer', seconds);
+        }, 1000);
+    }
+
+    flood(r, c);
+    if (status !== 'lost') checkWin();
+}
+
+function flood(r, c) {
+    if (r < 0 || r >= ROWS || c < 0 || c >= COLS) return;
+    if (states[r][c] !== 'hidden') return;
+    const v = BOARD[r][c];
+
+    if (v === -1) {
+        states[r][c] = 'exploded';
+        paintCell(r, c);
+        doGameOver();
+        return;
+    }
+
+    states[r][c] = 'revealed';
+    paintCell(r, c);
+
+    if (v === 0) {
+        for (let dr = -1; dr <= 1; dr++)
+            for (let dc = -1; dc <= 1; dc++)
+                if (dr || dc) flood(r + dr, c + dc);
+    }
+}
+
+function doGameOver() {
+    status = 'lost';
+    clearInterval(timerHandle);
+    setSmiley('lost');
+    for (let r = 0; r < ROWS; r++) {
+        for (let c = 0; c < COLS; c++) {
+            const s = states[r][c], v = BOARD[r][c];
+            if (v === -1 && s !== 'exploded' && s !== 'flagged') {
+                states[r][c] = 'revealed'; paintCell(r, c);
+            } else if (v !== -1 && s === 'flagged') {
+                states[r][c] = 'wrong'; paintCell(r, c);
+            }
+        }
+    }
+}
+
+function checkWin() {
+    for (let r = 0; r < ROWS; r++)
+        for (let c = 0; c < COLS; c++)
+            if (BOARD[r][c] !== -1 && states[r][c] !== 'revealed') return;
+
+    status = 'won';
+    clearInterval(timerHandle);
+    setSmiley('won');
+    for (let r = 0; r < ROWS; r++) {
+        for (let c = 0; c < COLS; c++) {
+            if (BOARD[r][c] === -1 && states[r][c] !== 'flagged') {
+                states[r][c] = 'flagged'; flagCount++; paintCell(r, c);
+            }
+        }
+    }
+    drawLCD('lcd-mines', 0);
+}
+
+/* ── Global cleanup ───────────────────────────────────────── */
+document.addEventListener('mouseup', () => {
+    if (dragCell) {
+        const old = getEl(dragCell.r, dragCell.c);
+        if (old) old.classList.remove('pressed');
+        dragCell = null;
+        if (status !== 'won' && status !== 'lost') setSmiley('smile');
+        document.getElementById('smiley-btn').classList.remove('pressed');
+    }
+});
+
+document.getElementById('smiley-btn').addEventListener('mousedown', () => {
+    document.getElementById('smiley-btn').classList.add('pressed');
+});
+document.getElementById('smiley-btn').addEventListener('click', init);
+document.getElementById('smiley-btn').addEventListener('contextmenu', e => e.preventDefault());
+document.getElementById('board').addEventListener('contextmenu', e => e.preventDefault());
+
+/* ── Start ──────────────────────────────────────────────────  */
+init();
+</script>
+</body>
+</html>
