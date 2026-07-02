@@ -2,525 +2,447 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Minesweeper</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>36 Days of Type — frog</title>
 <style>
-* { box-sizing: border-box; margin: 0; padding: 0; }
+  :root{
+    --bg: #071310;
+    --bg-alt: #0c211b;
+    --line: rgba(223, 245, 107, 0.18);
+    --accent: #dff56b;
+    --accent-dim: #a9c95a;
+    --text: #eef3ea;
+    --text-dim: #9fb0a6;
+    --card: #0e1e19;
+  }
+  *{ box-sizing: border-box; margin:0; padding:0; }
+  html,body{
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, "Segoe UI", Helvetica, Arial, sans-serif;
+    scroll-behavior: smooth;
+  }
+  body{
+    background-image:
+      linear-gradient(var(--line) 1px, transparent 1px),
+      linear-gradient(90deg, var(--line) 1px, transparent 1px);
+    background-size: 34px 34px;
+    background-attachment: fixed;
+  }
 
-body {
-    background: #008080;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: 100vh;
-    user-select: none;
-    -webkit-user-select: none;
-    font-family: 'MS Sans Serif', 'Segoe UI', Arial, sans-serif;
-}
-
-.window {
-    background: #c0c0c0;
-    border: 3px solid;
-    border-color: #dfdfdf #404040 #404040 #dfdfdf;
-    padding: 3px;
-}
-
-.title-bar {
-    background: linear-gradient(to right, #000080, #1084d0);
-    color: #fff;
-    font-size: 11px;
-    font-weight: bold;
-    padding: 2px 4px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    height: 18px;
-    margin-bottom: 3px;
-}
-
-.title-text {
-    display: flex;
-    align-items: center;
-    gap: 4px;
-}
-
-.title-buttons {
-    display: flex;
-    gap: 2px;
-}
-
-.title-btn {
-    width: 14px;
-    height: 12px;
-    background: #c0c0c0;
-    color: #000;
-    border: 1px solid;
-    border-color: #fff #404040 #404040 #fff;
-    font-size: 8px;
-    line-height: 1;
-    cursor: default;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 0;
-}
-
-.game-body {
-    padding: 4px;
-}
-
-/* Header panel */
-.panel {
-    background: #c0c0c0;
-    border: 3px solid;
-    border-color: #808080 #dfdfdf #dfdfdf #808080;
-    padding: 5px 6px 5px 6px;
-    margin-bottom: 6px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    height: 37px;
-}
-
-/* Smiley button */
-.smiley-btn {
-    width: 26px;
-    height: 26px;
-    background: #c0c0c0;
-    border: 3px solid;
-    border-color: #dfdfdf #808080 #808080 #dfdfdf;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 13px;
-    line-height: 1;
-    outline: none;
-    padding: 0;
-}
-
-.smiley-btn.pressed {
-    border-color: #808080 #dfdfdf #dfdfdf #808080;
-    padding-top: 2px;
-    padding-left: 2px;
-}
-
-/* Board */
-.board-wrap {
-    border: 3px solid;
-    border-color: #808080 #dfdfdf #dfdfdf #808080;
-    line-height: 0;
-    font-size: 0;
-}
-
-.board {
-    display: grid;
-    grid-template-columns: repeat(9, 20px);
-    grid-template-rows: repeat(9, 20px);
-}
-
-/* Cells */
-.cell {
-    width: 20px;
-    height: 20px;
-    cursor: default;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 14px;
-    font-weight: bold;
-    font-family: 'Arial', sans-serif;
-    line-height: 1;
-    box-sizing: border-box;
+  /* ---------- Header ---------- */
+  header{
+    padding: 72px 6vw 40px;
+    position: relative;
     overflow: hidden;
-}
+  }
+  .eyebrow{
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+    font-size: 12px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--accent);
+    border: 1px solid var(--line);
+    padding: 6px 12px;
+    border-radius: 999px;
+    margin-bottom: 28px;
+  }
+  .eyebrow::before{
+    content:"";
+    width:7px; height:7px;
+    border-radius:50%;
+    background: var(--accent);
+    box-shadow: 0 0 8px var(--accent);
+  }
+  h1{
+    font-size: clamp(48px, 10vw, 128px);
+    font-weight: 900;
+    line-height: 0.88;
+    letter-spacing: -0.02em;
+    text-transform: uppercase;
+    color: var(--text);
+  }
+  h1 span{ color: var(--accent); }
+  .sub{
+    max-width: 620px;
+    margin-top: 22px;
+    color: var(--text-dim);
+    font-size: 16px;
+    line-height: 1.6;
+  }
+  .stats{
+    display:flex;
+    gap: 36px;
+    margin-top: 40px;
+    flex-wrap: wrap;
+  }
+  .stat b{
+    display:block;
+    font-size: 30px;
+    font-weight: 900;
+    color: var(--accent);
+  }
+  .stat span{
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--text-dim);
+  }
 
-.cell.hidden,
-.cell.flagged,
-.cell.question {
-    background: #c0c0c0;
-    border: 2px solid;
-    border-color: #fff #808080 #808080 #fff;
+  /* ---------- Grid ---------- */
+  main{ padding: 20px 6vw 100px; }
+  .grid{
+    display:grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 3px;
+  }
+  .tile{
+    position: relative;
+    aspect-ratio: 1/1;
+    overflow: hidden;
     cursor: pointer;
-}
+    background: var(--card);
+    outline: 1px solid transparent;
+  }
+  .tile img{
+    width:100%; height:100%;
+    object-fit: cover;
+    display:block;
+    filter: saturate(0.92) contrast(1.02);
+    transition: transform .5s cubic-bezier(.2,.8,.2,1), filter .4s ease;
+  }
+  .tile .code{
+    position:absolute;
+    top:8px; left:10px;
+    font-weight:900;
+    font-size:14px;
+    color: var(--text);
+    text-shadow: 0 1px 6px rgba(0,0,0,.7);
+    letter-spacing: 0.02em;
+    z-index: 2;
+    pointer-events:none;
+  }
+  .tile .overlay{
+    position:absolute; inset:0;
+    display:flex;
+    flex-direction:column;
+    justify-content:flex-end;
+    padding: 12px;
+    background: linear-gradient(to top, rgba(3,10,7,.96) 0%, rgba(3,10,7,.55) 45%, rgba(3,10,7,0) 75%);
+    opacity:0;
+    transform: translateY(6px);
+    transition: opacity .28s ease, transform .28s ease;
+    z-index: 1;
+  }
+  .tile .overlay .name{
+    font-size: 12.5px;
+    font-weight: 800;
+    color: var(--accent);
+    line-height:1.25;
+  }
+  .tile .overlay .role{
+    font-size: 10.5px;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    margin-top: 2px;
+  }
+  .tile:hover img, .tile:focus-visible img{
+    transform: scale(1.08);
+    filter: saturate(1.05) contrast(1.05);
+  }
+  .tile:hover .overlay, .tile:focus-visible .overlay{
+    opacity:1;
+    transform: translateY(0);
+  }
+  .tile:focus-visible{ outline: 2px solid var(--accent); outline-offset: -2px; }
 
-.cell.pressed {
-    border-color: #808080 #c0c0c0 #c0c0c0 #808080 !important;
-    border-width: 1px !important;
-}
+  footer{
+    padding: 40px 6vw 80px;
+    color: var(--text-dim);
+    font-size: 13px;
+    display:flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px;
+    border-top: 1px solid var(--line);
+  }
+  footer b{ color: var(--text); }
 
-.cell.revealed,
-.cell.exploded,
-.cell.wrong {
-    background: #c0c0c0;
-    border: 1px solid;
-    border-color: #808080 #dfdfdf #dfdfdf #808080;
-}
+  /* ---------- Modal ---------- */
+  .modal-backdrop{
+    position: fixed; inset:0;
+    background: rgba(2,7,5,0.88);
+    backdrop-filter: blur(6px);
+    display:none;
+    align-items:center;
+    justify-content:center;
+    z-index: 50;
+    padding: 24px;
+  }
+  .modal-backdrop.open{ display:flex; }
+  .modal{
+    width: min(920px, 100%);
+    max-height: 88vh;
+    overflow:auto;
+    background: var(--bg-alt);
+    border: 1px solid var(--line);
+    display:grid;
+    grid-template-columns: 1fr 1fr;
+    position: relative;
+  }
+  @media (max-width: 720px){
+    .modal{ grid-template-columns: 1fr; }
+  }
+  .modal-img{
+    background: var(--card);
+    aspect-ratio: 1/1;
+  }
+  .modal-img img{ width:100%; height:100%; object-fit:cover; display:block; }
+  .modal-body{
+    padding: 34px 32px;
+    display:flex;
+    flex-direction:column;
+    min-width: 0;
+  }
+  .modal-code{
+    font-size: 42px;
+    font-weight: 900;
+    color: var(--accent);
+    line-height:1;
+    margin-bottom: 18px;
+  }
+  .lang-toggle{
+    display:inline-flex;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    padding: 3px;
+    gap: 3px;
+    margin-bottom: 18px;
+    width: fit-content;
+  }
+  .lang-toggle button{
+    background: transparent;
+    border: none;
+    color: var(--text-dim);
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    padding: 6px 14px;
+    border-radius: 999px;
+    cursor: pointer;
+  }
+  .lang-toggle button.active{
+    background: var(--accent);
+    color: #0a1a14;
+  }
+  .modal-quote{
+    font-size: 17px;
+    line-height: 1.6;
+    color: var(--text);
+    font-style: italic;
+    white-space: pre-line;
+    flex: 1;
+  }
+  .modal-author{
+    margin-top: 24px;
+    padding-top: 18px;
+    border-top: 1px solid var(--line);
+  }
+  .modal-author .name{ font-weight: 800; font-size: 15px; }
+  .modal-author .role{ color: var(--accent-dim); font-size: 12.5px; text-transform: uppercase; letter-spacing: 0.05em; margin-top: 2px; }
 
-.cell.exploded {
-    background: #ff0000;
-}
+  .modal-close, .modal-nav{
+    position:absolute;
+    background: rgba(7,19,16,0.7);
+    border: 1px solid var(--line);
+    color: var(--text);
+    cursor:pointer;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    z-index: 3;
+  }
+  .modal-close{
+    top: 14px; right: 14px;
+    width: 36px; height: 36px;
+    border-radius: 50%;
+    font-size: 18px;
+  }
+  .modal-nav{
+    top: 50%;
+    transform: translateY(-50%);
+    width: 44px; height: 44px;
+    border-radius: 50%;
+    font-size: 20px;
+  }
+  .modal-nav.prev{ left: 14px; }
+  .modal-nav.next{ right: 14px; }
+  .modal-close:hover, .modal-nav:hover{ background: var(--accent); color:#0a1a14; }
 
-/* Number colours */
-.cell.n1 { color: #0000fe; }
-.cell.n2 { color: #017901; }
-.cell.n3 { color: #fe0000; }
-.cell.n4 { color: #010180; }
-.cell.n5 { color: #810102; }
-.cell.n6 { color: #018080; }
-.cell.n7 { color: #000; }
-.cell.n8 { color: #808080; }
+  @media (max-width: 520px){
+    header{ padding: 48px 5vw 28px; }
+    main{ padding: 12px 5vw 60px; }
+    .grid{ grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); }
+  }
 </style>
 </head>
 <body>
 
-<div class="window">
-    <div class="title-bar">
-        <div class="title-text">
-            <span>💣</span>
-            <span>Minesweeper</span>
-        </div>
-        <div class="title-buttons">
-            <div class="title-btn">_</div>
-            <div class="title-btn">□</div>
-            <div class="title-btn">✕</div>
-        </div>
+<header>
+  <div class="eyebrow">frog · part of Capgemini Invent</div>
+  <h1>36 Days<br>of <span>Type</span></h1>
+  <p class="sub">40 characters, one per letter, digit and symbol — designed by the frog studio (Madrid · Valencia · Barcelona). Hover a tile for the author, click to read the full story behind it.</p>
+  <div class="stats">
+    <div class="stat"><b>40</b><span>Characters</span></div>
+    <div class="stat"><b>26+10+4</b><span>Letters · Digits · Symbols</span></div>
+    <div class="stat"><b>3</b><span>Studios</span></div>
+  </div>
+</header>
+
+<main>
+  <div class="grid" id="grid"></div>
+</main>
+
+<footer>
+  <span><b>36 Days of Type</b> — frog, part of Capgemini Invent</span>
+  <span>Click any tile for the full story</span>
+</footer>
+
+<div class="modal-backdrop" id="modalBackdrop">
+  <div class="modal" id="modal">
+    <button class="modal-close" id="modalClose" aria-label="Close">✕</button>
+    <button class="modal-nav prev" id="modalPrev" aria-label="Previous">‹</button>
+    <button class="modal-nav next" id="modalNext" aria-label="Next">›</button>
+    <div class="modal-img"><img id="modalImg" alt=""></div>
+    <div class="modal-body">
+      <div class="modal-code" id="modalCode"></div>
+      <div class="lang-toggle">
+        <button id="btnEs" class="active">ES</button>
+        <button id="btnEn">EN</button>
+      </div>
+      <div class="modal-quote" id="modalQuote"></div>
+      <div class="modal-author">
+        <div class="name" id="modalName"></div>
+        <div class="role" id="modalRole"></div>
+      </div>
     </div>
-    <div class="game-body">
-        <div class="panel">
-            <canvas id="lcd-mines" width="41" height="25"></canvas>
-            <button class="smiley-btn" id="smiley-btn"></button>
-            <canvas id="lcd-timer" width="41" height="25"></canvas>
-        </div>
-        <div class="board-wrap">
-            <div class="board" id="board"></div>
-        </div>
-    </div>
+  </div>
 </div>
 
 <script>
-'use strict';
-
-/* ── Fixed board layout ───────────────────────────────────────
-   -1 = mine, 0-8 = adjacent mine count                       */
-const BOARD = [
-    [ 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [ 0, 1, 2, 3, 3, 2, 1, 0, 0],
-    [ 0, 2,-1,-1,-1,-1, 1, 0, 0],
-    [ 0, 3,-1, 7, 5, 3, 1, 0, 0],
-    [ 0, 2,-1,-1,-1, 2, 1, 0, 0],
-    [ 0, 1, 2, 3, 4,-1, 2, 0, 0],
-    [ 0, 1, 2, 3, 4,-1, 2, 0, 0],
-    [ 0, 1,-1,-1,-1, 2, 1, 0, 0],
-    [ 0, 1, 2, 3, 2, 1, 0, 0, 0],
+const DATA = [
+  { code:"A", img:"A.jpg", es:"He convertido la “A” en esa primera mascota que muchos tuvimos. Porque siendo niña de los 2000 nostalgia para mí son esos juguetes tan chulos: colores chillones, pantallita pixelada y el drama de que se te muriera en clase.\nBueno, y que todas las chicas chulísimas tuvimos un tamagotchi colgado de la mochila. 💋", en:"I've turned the “A” into that first virtual pet many of us had. Because as a kid growing up in the 2000s, those cool toys are what I'm nostalgic for: bright colors, a pixelated little screen, and the drama of it dying in school.\nWell, and the fact that all the coolest girls had a Tamagotchi hanging from their backpacks. 💋", name:"Bea Sánchez", role:"Visual Design" },
+  { code:"B", img:"B.jpg", es:"No eran lo más nostálgico… pero los brackets estaban en todos tus momentos: fotos, instituto, hasta el primer beso (con miedo real a quedarte enganchado 😂).\nApretaban cada mes, comías blando y aprendías lo que era ser “BOCACHAPA”.\nLas gomas de colores eran tu estilo (aunque el verde… 🤢).\nY luego, el gran día: te los quitaban y no podías dejar de sonreír. Incómodos, sí… pero parte de crecer 😁", en:"They weren't exactly the most nostalgic thing… but brackets were there for all your moments: photos, school, even your first kiss (with the real fear of getting stuck 😂). They tightened them every month, you ate soft foods, and learned what it meant to be called “BOCACHAPA.”\nColored bands were your style (even if you regretted the green 🤢).\nAnd then, the big day: they came off, and you couldn't stop smiling. Uncomfortable, yes… but part of growing up 😁", name:"David Aguirre", role:"Visual Design" },
+  { code:"C", img:"C.jpg", es:"Como guiño al pasado he elegido “Los Simpsons”. Crecí en los 90 viéndolos y se convirtieron en algo más que una serie: eran parte del día a día. Esa cita a las 14h, las risas en casa, ese humor que se te queda grabado. Aún hoy me sale alguna referencia sin pensar, reconozco escenas y ese estilo tan característico sigue teniendo algo especial…\nEsta letra es un pequeño homenaje a todo lo que me ha acompañado durante años y que, de alguna forma, sigue conmigo: sigue siendo casa.\n“Casa es poder volver a casa de tus padres y que nada haya cambiado, aunque todo sea distinto.” (Elvira Sastre)\n¡Ah! Y si no te gusta… “multiplícate por cero” 😜", en:"As a nod to the past, I chose “The Simpsons.” I grew up watching them in the 90s and they became more than just a show: they were part of everyday life. That 2pm appointment, the laughs at home, the humor that sticks with you. Even today a reference slips out without thinking, I recognize scenes and that distinctive style still has something special…\nThis letter is a small tribute to everything that has accompanied me for years and that, somehow, is still with me: it's still home.\n“Home is being able to go back to your parents' house and have nothing changed, even though everything is different.” (Elvira Sastre)\nAh! And if you don't like it… “multiply yourself by zero” 😜", name:"Laura Fernández", role:"Service Design" },
+  { code:"D", img:"D.jpg", es:"Aún guardo el olor de las palomitas en mi memoria.\nLa magia comenzaba con las luces apagándose y ese castillo, brotando en la gran pantalla. La primera vez en el cine o la número 100 en mi casa. Esta D es sinónimo de infancia.", en:"I can still smell the popcorn in my memory. The magic began when the lights dimmed and that castle appeared on the big screen. Whether it was my first time at the movies or my 100th time at home. This “D” is synonymous with childhood.", name:"Yolanda Álvarez", role:"Interaction Design" },
+  { code:"E", img:"E.jpg", es:"Pintar es lo que más me gusta.\n\nHe pintado la E de mi nombre, con una pajarita chula.\nMi abuela que también pinta muy bien, me ha ayudado.", en:"Painting is my favorite thing to do.\n\nI painted the “E” in my name, with a cool little bow tie.\nMy grandmother, who is also a great painter, helped me.", name:"Eric López", role:"Tadpole, Future Visual Designer" },
+  { code:"F", img:"F.jpg", es:"“Froghaus” nace de la F como recuerdo vivo de la Bauhaus: su forma, su eco. Somos ranas saltando entre tiempos que ya no existen.\nEn su geometría late una nostalgia luminosa, como si el pasado soñara con volver a diseñar el presente con más calma y verdad.", en:"“Froghaus” takes its name from the letter F as a living reminder of the Bauhaus: its form, its echo. We are frogs leaping between times that no longer exist.\nA luminous nostalgia pulses through its geometry, as if the past were dreaming of redesigning the present with greater calm and truth.", name:"Fátima Avendaño", role:"Service Design" },
+  { code:"G", img:"G.jpg", es:"Nunca supimos su utilidad, pero casi todos tuvimos una. La mirábamos sin medir el tiempo, hasta que un día desapareció sin darnos cuenta. No sabemos si realmente quedaba “guay”, pero ocupó, sin duda, un hueco en nuestra historia.\n\n[Creatividad hecha con IA.]", en:"We never really knew what it was for, but almost all of us had one. We'd stare at it without keeping track of time, until one day it disappeared without us even noticing. We don't know if it was actually “cool,” but it certainly left its mark on our history.\n\n[Creativity powered by AI.]", name:"Paula Baeza", role:"Strategy" },
+  { code:"H", img:"H.jpg", es:"H de noches que empezaban por la tarde.\nDe charlas, risas y mutua admiración.\nDe recuerdos que el tiempo no borrará ni una parte.\nDe la única batalla que no tuvo solución.\n\nH, de hermano.", en:"H for nights that began in the afternoon.\nFor conversations, laughter and mutual admiration.\nFor memories that time will never erase, not even a single one.\nFor the one battle that had no solution.\n\nH, for brother.", name:"Héctor Martín", role:"DLS & Design Ops" },
+  { code:"I", img:"I.jpg", es:"La nostalgia no susurra… la nostalgia te grita en rosa con purpurina. Un viaje directo a los 2000: intensidad, drama, brilli brilli y tipografías imposibles que crearon un patrimonio emocional colectivo.\n¿¿Quién no volvería a esa época en la que lo más importante era tener saldo para descargarte el politono de moda??", en:"Nostalgia doesn't whisper… nostalgia screams at you in pink with glitter. A trip straight back to the 2000s: intensity, drama, sparkles, and impossible fonts that created a collective emotional legacy.\nWho wouldn't want to go back to that time when the most important thing was having enough credit to download the latest ringtone??", name:"Irene Fernández", role:"Visual Design" },
+  { code:"J", img:"J.jpg", es:"He pintado una J de “Scrabble” con ceras Manley porque ambas huelen, literalmente, a mi infancia. El “Scrabble” son sobremesas infinitas con la familia y las ceras, manos pringadas en plástica que era mi asignatura favorita.", en:"I've drawn a 'J' from 'Scrabble' using Manley crayons because both literally smell like my childhood. 'Scrabble' means endless after-dinner games with the family, and the crayons mean hands covered in wax during art class—which was my favourite subject.", name:"Marina Calvo", role:"DLS & Design Ops" },
+  { code:"K", img:"K.jpg", es:"La icónica pose de Tony Manero lleva décadas simbolizando el deseo universal de mostrarse y sentirse suficiente, aunque sea por un momento. Él no era más auténtico que nosotros, se construía tanto como cualquiera: el traje, el pelo, los movimientos ensayados… todo para salir a la pista y decir \"esto es lo que hay\". Paradójicamente, nosotros a día de hoy tenemos más medios y nos cuesta más creer nuestra valía.\nEn esta época mejorar se ha vuelto obligación y entonces nunca es suficiente.\nLa nostalgia de esta K no es por los 70 ni por Manero, sino por saber construirse con lo que se tiene y aceptar tu valor.\n\n[Creatividad hecha con IA]", en:"The iconic pose of Tony Manero has spent decades symbolizing the universal desire to show off and feel like enough, even if just for a moment. He was no more authentic than we are, he built himself up just like anyone: the suit, the hair, the rehearsed moves… all to hit the dance floor and say \"this is what there is\". Paradoxically, today we have more resources and yet find it harder to believe in our own worth.\nIn this era, improving has become an obligation, and so it's never enough.\nThe nostalgia in this K isn't for the 70s or for Manero, but for knowing how to build yourself with what you have and accept your worth.\n\n[Creativity powered by AI]", name:"Rogelio Márquez", role:"Org Design" },
+  { code:"L", img:"L.jpg", es:"Nada más psicodélico en la habitación de una niña que la lámpara de lava. Muchos minutos acumulados escuchando música y observando cómo el calor transformaba las burbujas cuando no vivíamos con tanta prisa.", en:"Nothing is more psychedelic in a little girl's room than a lava lamp. We spent countless minutes listening to music and observing how the heat transformed the bubbles back when life didn't move so fast.", name:"Emma Pascual", role:"Visual Design" },
+  { code:"M", img:"M.jpg", es:"Si hablamos de nostalgia y que empiece con la letra M…pues M de Música, y qué mejor que esos casettes a los que se les salía la cinta y las dabas por perdidos. Todos llevábamos un buen boli Bic para rebobinar y recordamos el momento de grabar las canciones directamente de la radio.\n\nMezcla de estilos con la tan actual IA, collage, retoque e ilustración: un poquito de todo y un muchito de nada.\nY ya sabéis \"será 3, 2 ó 1\" ¡siempre Joaquin Luqui!", en:"If we're talking about nostalgia and something that starts with the letter M… well, M for Music, and what could be better than those cassettes where the tape would pop out and you'd think they were lost forever. We all had a Bic pen for rewinding, and we remember the days of recording songs straight from the radio.\n\nA mix of styles with contemporary AI, collage, retouching, and illustration: a little bit of everything and a whole lot of nothing.\nAnd you know, “it'll be 3, 2, or 1”—always Joaquin Luqui!", name:"Nacho Guti", role:"Interaction Design" },
+  { code:"N", img:"N.jpg", es:"Por todas esas tardes viendo como ese campo infinito te enseñaba a nunca dejar de perseguir tus sueños.", en:"For all those afternoons watching as that endless field taught you never to stop chasing your dreams.", name:"Humberto Jiménez-Freile", role:"Interaction Design" },
+  { code:"O", img:"O.jpg", es:"Debo confesar que Barbie ha marcado gran parte de mi vida. AMABA jugar con ellas, con sus vestidos, zapatos, peinados, múltiples profesiones, mansiones, etc… y sobre todo amaba la idea que pretendía transmitirnos: “Sé lo que quieras ser”. Barbie representaba a una mujer independiente que podía hacer de todo, sin barreras (el único límite era la cartera de mis padres cuando les pedía el Corvette).\n\nLuego crecí y me di cuenta de que no todo lo que representaba esta muñeca era de color rosa, aunque no puedo negar que, en secreto, sigo enamorada de la idea romántica de que puedo ser lo que yo quiera ser (y además tener un pelo divino).\n\nUn abrazo fuerte a todas mis Barbies frog 💖", en:"I must confess that Barbie has shaped a big part of my life. I LOVED playing with them, with their dresses, shoes, hairstyles, multiple careers, mansions, etc… and above all I loved the idea it tried to convey to us: “Be whatever you want to be.” Barbie represented an independent woman who could do anything, without barriers (the only limit was my parents' wallet when I asked for the Corvette).\n\nThen I grew up and realized that not everything this doll represented was pink, although I can't deny that, secretly, I'm still in love with the romantic idea that I can be whoever I want to be (and also have divine hair).\n\nA big hug to all my frog Barbies 💖", name:"María G. Hernández", role:"Visual Design" },
+  { code:"P", img:"P.jpg", es:"En la memoria habitan los lugares que fueron puntos de referencia, territorios de infancia. En ellos, el gesto dedicado de nuestras abuelas, tejiendo, creando, convirtiendo el espacio en hogar, y el recuerdo en una forma de permanecer.", en:"Our memories hold the places that served as landmarks, the landscapes of our childhood. In them, we find the devoted care of our grandmothers—knitting, creating, turning space into a home—and the memory itself becomes a way of enduring.", name:"Patricia Salcedo", role:"Service Design" },
+  { code:"Q", img:"Q.jpg", es:"Aquel CD rayado y quemado en casa que sonó en repeat durante un viaje a la playa. Eurodance, trance, La Oreja de Van Gogh, Corazón Partío… y, por supuesto, los eternos “Track03” y “untitled”. La banda sonora de un verano del 99 que todavía resuena, como un eco perdido, en algún lugar de la eternidad.", en:"That scratched, homemade CD that played on endless repeat during a trip to the beach. Eurodance, trance, La Oreja de Van Gogh, “Corazón Partío”… and, of course, the timeless “Track03” and “untitled.” The soundtrack to a summer in '99 that still echoes, like a lost echo, somewhere in eternity.", name:"Sofía Borovskaya", role:"Delivery Management" },
+  { code:"R", img:"R.jpg", es:"Esta tipografía sale del Buscaminas, ese juego que no tenía música, ni historia… pero te absorbía la vida.\nHoras pensando “una más y paro”. Es nostalgia pura: clics lentos, sudores fríos y la sensación de genio absoluto cuando no explotaba nada.\nDiseño con trauma incluido.", en:"This design comes from Buscaminas (Minesweeper), that game with no music, no story… but it completely consumed you. Hours spent thinking, “Just one more, then I'll stop.” It's pure nostalgia: slow clicks, cold sweats, and that feeling of absolute genius when nothing blew up. Design with trauma included.", name:"Ana Riestra", role:"Customer Transformation" },
+  { code:"S", img:"S.jpg", es:"Cuando pienso en nostalgia pienso en abuelos e infancia.\nCuando pienso en abecedario pienso el libro de letras con formas de animales que tenía de pequeña.\nCuando pienso en la letra S pienso en una serpiente que sisea.\nAl mirar esta serpiente pienso en todo eso y me hace sonreír, espero que a vosotros también.", en:"When I think of nostalgia, I think of my grandparents and my childhood.\nWhen I think of the alphabet, I think of the book of letters with animal shapes that I had when I was little.\nWhen I think of the letter S, I think of a hissing snake.\nWhen I look at this snake, I think of all that, and it makes me smile. I hope it makes you smile, too.", name:"Elena Herrero", role:"Customer Transformation" },
+  { code:"T", img:"T.jpg", es:"San Isidro siempre me ha parecido mágico, pero también ajeno. Un pie dentro, otro fuera. Esta rosquilla de dulce de leche es mi forma de estar en ambos lados a la vez: sabe a Madrid, pero me lleva directa a Brasil. Dos hogares en un bocado. Dos pertenencias en una letra.", en:"San Isidro has always seemed magical to me, but also distant. One foot in, one foot out. This dulce de leche doughnut is my way of being on both sides at once: it tastes like Madrid, but it takes me straight to Brazil. Two homes in one bite. Two places I call home in one word.", name:"Tariany da Silva", role:"Interaction Design" },
+  { code:"U", img:"U.jpg", es:"Nostalgia es lo que siento cuando veo lo sencillas que antes eran las cosas. Tan simples como entretenidas. Tiempo dedicado a intentar conseguir esa máxima puntuación con la que batir el record de mi padre en el Snake. La batería nunca fue un problema. Solo contaba disfrutar e intentar superarte.", en:"I feel a sense of nostalgia when I see how simple things used to be. So simple, yet so entertaining. I spent hours trying to get that perfect score to beat my dad's record at Snake. The battery never was an issue. It was all about having fun and trying to outdo yourself.", name:"Neia Isidro", role:"Service Design" },
+  { code:"V", img:"V.jpg", es:"Recordé todos esos viajes en transporte público, tratando de desenredar los auriculares, con bronca porque, no importaba cómo, siempre terminaban enredados de las formas más raras y difíciles de deshacer. No me parece extraño que, en algún momento, al sacarlos de la mochila, aparecieran así. Cualquier forma era posible. Estoy segura de que lo hacían a propósito.", en:"I remembered all those journeys on public transport, trying to untangle my headphones, getting annoyed because, no matter what I did, they always ended up tangled in the strangest, most impossible-to-untangle ways. It doesn't seem strange to me that, at some point, when I took them out of my rucksack, they'd turn up like that. Any shape was possible. I'm sure they did it on purpose.", name:"Victoria Assef", role:"Visual Design" },
+  { code:"W", img:"W.jpg", es:"El diseño de la letra W está realizado con elementos que representan el recuerdo de 3 deportes que practicaba hace 40 años que eran bastante minoritarios", en:"The design of the letter W is made with elements that represent the memory of 3 sports that I practiced 40 years ago that were quite minority sports.", name:"Javier Elena", role:"Operations" },
+  { code:"X", img:"X.jpg", es:"La X es una forma que no remite a un objeto, sino a una posición. No es respuesta, es elección.\nEn el contexto urbano de los 90 - en el collage formado por las escenas del skateboarding, hardcore y el movimiento straight edge - la X fue (y es) un símbolo de rebelión consciente, activismo y unidad.\n\n[Creatividad hecha con IA]", en:"The X is a shape that does not refer to an object, but to a stance. It is not a response, but a choice.\nIn the urban context of the 1990s – within the collage formed by the skateboarding, hardcore and straight edge scenes – the X was (and still is) a symbol of conscious rebellion, activism and unity.\n\n[Creativity powered by AI]", name:"Octavio Egea", role:"Strategy" },
+  { code:"Y", img:"Y.jpg", es:"¿Qué hay más nostálgico que viajar en el tiempo?\n“Regreso al futuro” dejó grabadas escenas imposibles de olvidar: una foto desvaneciéndose, un solo de guitarra fuera de su época y esa pregunta eterna: ¿Hay alguien en casa?", en:"What could be more nostalgic than traveling back in time?\n“Back to the Future” left us with unforgettable scenes: a fading photo, a guitar solo out of its time, and that timeless question: Is anyone home?", name:"Sergio Pérez", role:"Visual Design" },
+  { code:"Z", img:"Z.jpg", es:"Impregnada de la nostalgia de los 90, esta pieza rinde tributo a Twin Peaks convirtiendo el suelo de la Logia Negra en un enigma visual. Bajo sus líneas en zigzag se oculta un símbolo que el espectador, como el agente Cooper, debe descifrar. Las manos en posición \"Meanwhile\" señalan el umbral del sueño, donde reside la clave del misterio.\nTal vez baste con mirarlo como lo haría Cooper: con un buen café en la mano.", en:"Steeped in 1990s nostalgia, this piece pays tribute to Twin Peaks by turning the floor of the Black Lodge into a visual puzzle. Hidden beneath its zigzag pattern lies a symbol that, like Agent Cooper, the viewer must decipher. The hands in the “Meanwhile” pose point toward the threshold of dreams, where the key to the mystery resides.\nPerhaps all it takes is to look at it the way Cooper would: with a good cup of coffee in hand.", name:"Gloria Fernández", role:"Visual Design" },
+  { code:"0", img:"0.jpg", es:"No hay nada más nostálgico para mí que escuchar el maldito Tamagotchi (el falso, obviamente) a las 2 de la mañana pidiendo comida.\n\nPintura al óleo sobre tablilla\n31 x 31 cm", en:"Nothing makes me feel more nostalgic than hearing that darn Tamagotchi (the fake one, of course) at 2 a.m. asking for food.\n\nGouache on board\n31 x 31 cm", name:"Luiza da Silva", role:"Visual Design" },
+  { code:"1", img:"1.jpg", es:"¡Tranquilidad viene de tranca!\n\nDecía mi abuela cuando pensábamos que la habíamos ganado… y ZAS, nudillos en la mesa y sacaba un as de bastos, o lo que fuera, y ganaba al Tute, Julepe, Chichón, o lo que fuera.", en:"My grandmother used to say that whenever we thought we had her beaten… and then BAM! She'd knock her knuckles on the table, pull out an ace of clubs—or whatever it was—and win at Tute, Julepe, Chichón, or any other card game we were playing.", name:"Ignacio Alarcón", role:"Strategy" },
+  { code:"2", img:"2.jpg", es:"El Pou es uno de los juegos que me recuerdan a una época de mi vida donde algo tan simple como personalizarlo y cuidarlo como a una mascota traía felicidad y entretenimiento. He recreado la interfaz pero esta vez está en el estudio de frog, con su nevera y los tuppers, los cafés imprescindibles y el Doeat para generar una futura nostalgia de este momento presente.", en:"Pou is one of those games that reminds me of a time in my life when something as simple as customizing it and caring for it like a pet brought me joy and entertainment. I've recreated the interface, but this time it's set in the frog studio, complete with its fridge and Tupperware containers, the indispensable cups of coffee, and the Doeat—all to create a sense of future nostalgia for this present moment.", name:"Andrea Bune", role:"Interaction Design" },
+  { code:"3", img:"3.jpg", es:"Ahora somos 3.\nTodo pasa muy rápido y deja una nostalgia agridulce.\nDespido la lactancia: demandante, bonita, irrepetible.\nAlimento que nace del cuerpo, vínculo y refugio.\nUna etapa que no volverá.\nLa guardo en mi memoria.", en:"Now we are three.\nEverything passes so quickly, leaving behind a bittersweet sense of nostalgia.\nI say goodbye to breastfeeding: demanding, beautiful, and unrepeatable.\nA source of nourishment born from the body, a bond, and a safe haven.\nA chapter that will never come again.\nI will keep it in my memory.", name:"Sofía Luengo", role:"Visual Design" },
+  { code:"4", img:"4.jpg", es:"Ya no son 4 gatos…\nEsta primavera nació en el Parque Nacional de Cabañeros la primera camada de lince ibérico en libertad, un éxito del programa de reintroducción de la especie tras estar casi al borde de la extinción.\nPara celebrar esta victoria he seguido el estilo de los ilustradores naturalistas como forma de rendir tributo a todas las personas que han trabajado para la preservación de la naturaleza y han ayudado a conseguir este logro.", en:"It's no longer “four cats”…\nThis spring, the first litter of Iberian lynx was born in the wild in Cabañeros National Park, marking a success for the species' reintroduction program after it had been on the brink of extinction.\nTo celebrate this victory, I've followed the style of naturalist illustrators as a way to pay tribute to all the people who have worked to preserve nature and helped make this achievement possible.", name:"Guiomar Valdés", role:"Interaction Design" },
+  { code:"5", img:"5.jpg", es:"Durante años pensé que el objetivo del juego minesweeper era encontrar la mayor cantidad de números; me acuerdo con alegría de descubrir un 5. Y más aún me acuerdo de mi sorpresa cuando un amigo me enseñó la manera “correcta” de jugar. Ya no me divirtió tanto como antes. Haciendo este proyecto me di cuenta de que son dos maneras de ver lo mismo.", en:"For years I thought the aim of Minesweeper was to find as many numbers as possible; I fondly remember discovering a 5. And I remember even more clearly my surprise when a friend showed me the 'proper' way to play. It didn't amuse me as much as it used to. Whilst working on this project, I realised that these are simply two ways of looking at the same thing.", name:"Juan Dodero", role:"Interaction Design" },
+  { code:"6", img:"6.jpg", es:"La figura simbólica del uróboros, nacida de un bucle de arena que se disgrega, representa un tiempo circular que busca prolongarse hacia el futuro sin cerrarse del todo. Esa fractura convierte su ascenso en nostalgia: el deseo melancólico de un futuro posible que se anuncia y se pierde simultáneamente.", en:"The symbolic figure of the ouroboros, born from a loop of sand that breaks apart, represents a circular flow of time that aims to extend into the future without ever fully closing. That fracture transforms its ascent into nostalgia: the melancholic longing for a possible future that is both promised and lost at the same time.", name:"Jon Eirea", role:"Visual Design" },
+  { code:"7", img:"7.jpg", es:"7 creado a partir del mítico diseño de franjas retro ochenteras que huelen a VHS y tardes adolescentes de pelis de acción y videos de MTV. Nostalgia pura de darle al “rewind” durante horas. Sin prisas ni streaming. Sí, somos la generación que perdía tiempo rebobinando… pero ganamos en mindfulness.", en:"7 created from the iconic '80s retro stripe design that smells like VHS and teenage afternoons filled with action movies and MTV videos. Pure nostalgia of hitting “rewind” for hours. No rush, no streaming. Yes, we are the generation that wasted time rewinding… but we gained mindfulness.", name:"Guillermo Bruno", role:"Visual Design" },
+  { code:"8", img:"8.jpg", es:"Quiero volver a la época en la que mi única responsabilidad era llegar a casa, jugar con mis juguetes, bañarme, cenar… y a dormir.\nCasita de Polly Pocket (versión super vintage)", en:"I want to go back to the days when my only responsibility was to get home, play with my toys, take a bath, have dinner… and go to sleep.\nPolly Pocket House (super vintage version)", name:"Dulce Bru", role:"DLS" },
+  { code:"9", img:"9.jpg", es:"Un Bubbaloo, el primer chicle que probé con líquido radiactivo dentro, responsable de muchos subidones de azúcar. Mi nostalgia tiene la forma de envoltorios individuales y colores vibrantes - el rosa nunca pasará de moda 😊", en:"A Bubbaloo, my first bubble gum with radioactive liquid inside, responsible for many of our sugar rushes. My nostalgia comes in the form of single wrappers and bright bold colors - pink will never be out of style 😊", name:"Blanca Colas", role:"Service Design" },
+  { code:"Ñ", img:"ntilde.jpg", es:"La idea de la nostalgia me devuelve a los domingos de infancia. Mi padre llegaba con churros y el periódico y, tras zamparme los churros, me lanzaba sobre El Pequeño País para leer 13 Rue del Percebe.\nEl short de los cómics noventeros.\n\n[Creatividad hecha con IA.]", en:"Nostalgia takes me back to Sunday mornings as a kid. My father would come home with churros and the newspaper and, once I'd devoured the churros, I'd dive into El Pequeño País to read 13 Rue del Percebe. It was the comic-book version of a Short back in the '90s.\n\n[Created by using AI.]", name:"Javier Cuesta", role:"Strategy" },
+  { code:"Ç", img:"ccedilla.jpg", es:"Con esta propuesta de la ç trencada he querido rendir homenaje al universo geométrico de Tetris, el mítico videojuego nacido en la antigua Unión Soviética. Sus formas encajadas y modulares conectan con la construcción gráfica del símbolo y también con una cierta nostalgia compartida: esas partidas infinitas que muchos seguimos jugando hoy. Yo, al menos, todavía me echo alguna. Pura terapia.", en:"With this proposal for the ç trencada, I wanted to pay tribute to the geometric universe of Tetris, the iconic video game born in the former Soviet Union. Its interlocking, modular shapes connect with the graphic construction of the symbol and also with a certain shared nostalgia: those endless games that many of us still play today. I, at least, still play a few now and then. Pure therapy.", name:"Francesc Risalde", role:"Visual Design" },
+  { code:"¡!", img:"inv-excl.jpg", es:"Podía ser un puzle, podía ser un castillo, podía ser una alfombra, segura ante todo y fácil de limpiar. Ahora entiendo porque los padres de mi amigo Martín la pusieron en la sala de juegos.\nAún recuerdo jugar al Just Dance sobre ella.\nNunca nada fue tan cómodo para caerse de la risa por tan mala coordinación.", en:"It could be a puzzle, it could be a castle, it could be a carpet. Safe above all, and easy to clean. Now I understand why my friend's parents placed it in the playroom.\nI still remember playing Just Dance on it. Nothing was ever so comfortable to fall over laughing because of such terrible coordination.", name:"Sergio Peromingo", role:"Visual Design" },
+  { code:"@", img:"at.jpg", es:"Lo sientes?\nEsa melodía de marcación seguida de un pitido que va de agudos a graves.\nDe repente, un chisporroteo metálico y un zumbido dan paso a una nube de ruido blanco que se disipa…\n¡Bienvenid@ a la autopista de la información!", en:"Can you hear it?\nThat dialling tone, followed by a beep that goes from high to low.\nSuddenly, a metallic crackle and a hum give way to a cloud of white noise that fades away…\nWelcome to the information superhighway!", name:"Belén Matínez", role:"Brand Strategy" }
 ];
 
-const ROWS = 9, COLS = 9, TOTAL_MINES = 13;
-
-/* ── SVG sprite helpers ───────────────────────────────────── */
-const MINE_SVG = `<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 14 14">
-  <line x1="7" y1="0.5" x2="7" y2="13.5" stroke="#000" stroke-width="2"/>
-  <line x1="0.5" y1="7" x2="13.5" y2="7" stroke="#000" stroke-width="2"/>
-  <line x1="2.4" y1="2.4" x2="11.6" y2="11.6" stroke="#000" stroke-width="2"/>
-  <line x1="11.6" y1="2.4" x2="2.4" y2="11.6" stroke="#000" stroke-width="2"/>
-  <circle cx="7" cy="7" r="4" fill="#000"/>
-  <circle cx="5.3" cy="5.3" r="1.1" fill="#fff"/>
-</svg>`;
-
-const FLAG_SVG = `<svg xmlns="http://www.w3.org/2000/svg" width="14" height="16" viewBox="0 0 14 16">
-  <line x1="5" y1="1" x2="5" y2="16" stroke="#000" stroke-width="2.5"/>
-  <polygon points="5,1 13,5 5,9" fill="#f00"/>
-  <line x1="2" y1="16" x2="8" y2="16" stroke="#000" stroke-width="2.5"/>
-</svg>`;
-
-const WRONG_SVG = `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="17" viewBox="0 0 16 17">
-  <line x1="5" y1="1" x2="5" y2="12" stroke="#000" stroke-width="2.5"/>
-  <polygon points="5,1 13,5 5,9" fill="#f00"/>
-  <line x1="2" y1="12" x2="8" y2="12" stroke="#000" stroke-width="2.5"/>
-  <line x1="1"  y1="13" x2="15" y2="16.5" stroke="#f00" stroke-width="2.5"/>
-  <line x1="1"  y1="16.5" x2="15" y2="13" stroke="#f00" stroke-width="2.5"/>
-</svg>`;
-
-/* ── 7-segment LCD canvas ─────────────────────────────────── */
-const SEG_ON  = '#fe0000';
-const SEG_OFF = '#3a0000';
-const SEG_BG  = '#000';
-
-/*  Segment indices:  a=top  b=top-right  c=bot-right
-                      d=bot  e=bot-left   f=top-left  g=mid  */
-const DIGIT_SEGS = {
-    0: 'abcdef', 1: 'bc',     2: 'abdeg',  3: 'abcdg',
-    4: 'bcfg',   5: 'acdfg',  6: 'acdefg', 7: 'abc',
-    8: 'abcdefg',9: 'abcdfg', '-': 'g'
-};
-
-function drawDigit(ctx, x, y) {
-    /* Each digit occupies 13×23 px; call with the digit value as 3rd arg */
-    const d = arguments[2];
-    const T = 2, SW = 9, SH = 9;
-    const segs = {
-        a: [x+2,       y,         SW, T ],
-        b: [x+2+SW,    y+2,       T,  SH],
-        c: [x+2+SW,    y+SH+3,    T,  SH],
-        d: [x+2,       y+2*SH+4,  SW, T ],
-        e: [x,         y+SH+3,    T,  SH],
-        f: [x,         y+2,       T,  SH],
-        g: [x+2,       y+SH+1,    SW, T ],
-    };
-    const active = new Set(DIGIT_SEGS[d] || '');
-    for (const [name, [sx, sy, sw, sh]] of Object.entries(segs)) {
-        ctx.fillStyle = active.has(name) ? SEG_ON : SEG_OFF;
-        ctx.fillRect(sx, sy, sw, sh);
-    }
-}
-
-function drawLCD(canvasId, value) {
-    const canvas = document.getElementById(canvasId);
-    const ctx = canvas.getContext('2d');
-    ctx.fillStyle = SEG_BG;
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-    let digits;
-    if (value < 0) {
-        const abs = Math.min(99, -value);
-        digits = ['-', Math.floor(abs / 10), abs % 10];
-    } else {
-        const v = Math.min(999, value);
-        digits = [Math.floor(v / 100), Math.floor((v % 100) / 10), v % 10];
-    }
-
-    for (let i = 0; i < 3; i++) {
-        drawDigit(ctx, 1 + i * 14, 1, digits[i]);
-    }
-}
-
-/* ── Game state ───────────────────────────────────────────── */
-let states, status, flagCount, seconds, timerHandle, dragCell;
-
-function getEl(r, c)  { return document.getElementById(`c${r}-${c}`); }
-
-function setSmiley(s) {
-    const faces = { smile: '🙂', surprised: '😮', won: '😎', lost: '😵' };
-    document.getElementById('smiley-btn').textContent = faces[s];
-}
-
-function init() {
-    clearInterval(timerHandle);
-    timerHandle = null;
-    states    = Array.from({length: ROWS}, () => Array(COLS).fill('hidden'));
-    status    = 'idle';
-    flagCount = 0;
-    seconds   = 0;
-    dragCell  = null;
-    drawLCD('lcd-mines', TOTAL_MINES);
-    drawLCD('lcd-timer', 0);
-    setSmiley('smile');
-    document.getElementById('smiley-btn').classList.remove('pressed');
-    buildBoard();
-}
-
-function buildBoard() {
-    const board = document.getElementById('board');
-    board.innerHTML = '';
-    for (let r = 0; r < ROWS; r++) {
-        for (let c = 0; c < COLS; c++) {
-            const el = document.createElement('div');
-            el.id = `c${r}-${c}`;
-            el.className = 'cell hidden';
-            el.dataset.r = r;
-            el.dataset.c = c;
-            el.addEventListener('mousedown',    onDown);
-            el.addEventListener('mouseup',      onUp);
-            el.addEventListener('mouseover',    onOver);
-            el.addEventListener('contextmenu',  onRight);
-            board.appendChild(el);
-        }
-    }
-}
-
-function paintCell(r, c) {
-    const el = getEl(r, c);
-    if (!el) return;
-    const s = states[r][c];
-    const v = BOARD[r][c];
-    el.className = 'cell';
-    el.innerHTML = '';
-
-    if (s === 'hidden') {
-        el.classList.add('hidden');
-    } else if (s === 'flagged') {
-        el.classList.add('flagged');
-        el.innerHTML = FLAG_SVG;
-    } else if (s === 'question') {
-        el.classList.add('question');
-        const span = document.createElement('span');
-        span.style.cssText = 'font-size:14px;font-weight:bold;color:#000';
-        span.textContent = '?';
-        el.appendChild(span);
-    } else if (s === 'revealed') {
-        el.classList.add('revealed');
-        if (v === -1) {
-            el.innerHTML = MINE_SVG;
-        } else if (v > 0) {
-            el.classList.add('n' + v);
-            el.textContent = v;
-        }
-    } else if (s === 'exploded') {
-        el.classList.add('exploded');
-        el.innerHTML = MINE_SVG;
-    } else if (s === 'wrong') {
-        el.classList.add('wrong');
-        el.innerHTML = WRONG_SVG;
-    }
-}
-
-/* ── Mouse handlers ────────────────────────────────────────── */
-function onDown(e) {
-    if (status === 'won' || status === 'lost') return;
-    if (e.button !== 0) return;
-    const r = +this.dataset.r, c = +this.dataset.c;
-    const s = states[r][c];
-    if (s === 'hidden' || s === 'question') {
-        dragCell = {r, c};
-        this.classList.add('pressed');
-        setSmiley('surprised');
-    }
-    e.preventDefault();
-}
-
-function onUp(e) {
-    if (status === 'won' || status === 'lost') return;
-    if (e.button !== 0) return;
-    document.getElementById('smiley-btn').classList.remove('pressed');
-    const r = +this.dataset.r, c = +this.dataset.c;
-    if (dragCell && dragCell.r === r && dragCell.c === c) {
-        dragCell = null;
-        this.classList.remove('pressed');
-        if (status !== 'won' && status !== 'lost') setSmiley('smile');
-        doReveal(r, c);
-    }
-}
-
-function onOver(e) {
-    if (!dragCell || status === 'won' || status === 'lost') return;
-    const r = +this.dataset.r, c = +this.dataset.c;
-    const old = getEl(dragCell.r, dragCell.c);
-    if (old) old.classList.remove('pressed');
-    const s = states[r][c];
-    if (s === 'hidden' || s === 'question') {
-        this.classList.add('pressed');
-        dragCell = {r, c};
-    } else {
-        dragCell = null;
-    }
-}
-
-function onRight(e) {
-    e.preventDefault();
-    if (status === 'won' || status === 'lost') return;
-    const r = +this.dataset.r, c = +this.dataset.c;
-    const s = states[r][c];
-    if      (s === 'hidden')   { states[r][c] = 'flagged';  flagCount++; }
-    else if (s === 'flagged')  { states[r][c] = 'question'; flagCount--; }
-    else if (s === 'question') { states[r][c] = 'hidden'; }
-    else return;
-    paintCell(r, c);
-    drawLCD('lcd-mines', TOTAL_MINES - flagCount);
-}
-
-/* ── Reveal logic ─────────────────────────────────────────── */
-function doReveal(r, c) {
-    const s = states[r][c];
-    if (s !== 'hidden' && s !== 'question') return;
-    if (s === 'question') states[r][c] = 'hidden';
-
-    if (status === 'idle') {
-        status = 'playing';
-        timerHandle = setInterval(() => {
-            if (seconds < 999) seconds++;
-            drawLCD('lcd-timer', seconds);
-        }, 1000);
-    }
-
-    flood(r, c);
-    if (status !== 'lost') checkWin();
-}
-
-function flood(r, c) {
-    if (r < 0 || r >= ROWS || c < 0 || c >= COLS) return;
-    if (states[r][c] !== 'hidden') return;
-    const v = BOARD[r][c];
-
-    if (v === -1) {
-        states[r][c] = 'exploded';
-        paintCell(r, c);
-        doGameOver();
-        return;
-    }
-
-    states[r][c] = 'revealed';
-    paintCell(r, c);
-
-    if (v === 0) {
-        for (let dr = -1; dr <= 1; dr++)
-            for (let dc = -1; dc <= 1; dc++)
-                if (dr || dc) flood(r + dr, c + dc);
-    }
-}
-
-function doGameOver() {
-    status = 'lost';
-    clearInterval(timerHandle);
-    setSmiley('lost');
-    for (let r = 0; r < ROWS; r++) {
-        for (let c = 0; c < COLS; c++) {
-            const s = states[r][c], v = BOARD[r][c];
-            if (v === -1 && s !== 'exploded' && s !== 'flagged') {
-                states[r][c] = 'revealed'; paintCell(r, c);
-            } else if (v !== -1 && s === 'flagged') {
-                states[r][c] = 'wrong'; paintCell(r, c);
-            }
-        }
-    }
-}
-
-function checkWin() {
-    for (let r = 0; r < ROWS; r++)
-        for (let c = 0; c < COLS; c++)
-            if (BOARD[r][c] !== -1 && states[r][c] !== 'revealed') return;
-
-    status = 'won';
-    clearInterval(timerHandle);
-    setSmiley('won');
-    for (let r = 0; r < ROWS; r++) {
-        for (let c = 0; c < COLS; c++) {
-            if (BOARD[r][c] === -1 && states[r][c] !== 'flagged') {
-                states[r][c] = 'flagged'; flagCount++; paintCell(r, c);
-            }
-        }
-    }
-    drawLCD('lcd-mines', 0);
-}
-
-/* ── Global cleanup ───────────────────────────────────────── */
-document.addEventListener('mouseup', () => {
-    if (dragCell) {
-        const old = getEl(dragCell.r, dragCell.c);
-        if (old) old.classList.remove('pressed');
-        dragCell = null;
-        if (status !== 'won' && status !== 'lost') setSmiley('smile');
-        document.getElementById('smiley-btn').classList.remove('pressed');
-    }
+const grid = document.getElementById('grid');
+DATA.forEach((d, i) => {
+  const tile = document.createElement('div');
+  tile.className = 'tile';
+  tile.tabIndex = 0;
+  tile.setAttribute('role','button');
+  tile.setAttribute('aria-label', `${d.code} — ${d.name}`);
+  tile.innerHTML = `
+    <span class="code">${d.code}</span>
+    <img src="images/characters/${d.img}" alt="${d.code}" loading="lazy">
+    <div class="overlay">
+      <div class="name">${d.name}</div>
+      <div class="role">${d.role}</div>
+    </div>
+  `;
+  tile.addEventListener('click', () => openModal(i));
+  tile.addEventListener('keydown', (e) => { if(e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openModal(i); } });
+  grid.appendChild(tile);
 });
 
-document.getElementById('smiley-btn').addEventListener('mousedown', () => {
-    document.getElementById('smiley-btn').classList.add('pressed');
-});
-document.getElementById('smiley-btn').addEventListener('click', init);
-document.getElementById('smiley-btn').addEventListener('contextmenu', e => e.preventDefault());
-document.getElementById('board').addEventListener('contextmenu', e => e.preventDefault());
+let current = 0;
+let lang = 'es';
+const backdrop = document.getElementById('modalBackdrop');
+const modalImg = document.getElementById('modalImg');
+const modalCode = document.getElementById('modalCode');
+const modalQuote = document.getElementById('modalQuote');
+const modalName = document.getElementById('modalName');
+const modalRole = document.getElementById('modalRole');
+const btnEs = document.getElementById('btnEs');
+const btnEn = document.getElementById('btnEn');
 
-/* ── Start ──────────────────────────────────────────────────  */
-init();
+function renderModal(){
+  const d = DATA[current];
+  modalImg.src = `images/characters/${d.img}`;
+  modalImg.alt = d.code;
+  modalCode.textContent = d.code;
+  modalQuote.textContent = lang === 'es' ? d.es : d.en;
+  modalName.textContent = d.name;
+  modalRole.textContent = d.role;
+  btnEs.classList.toggle('active', lang === 'es');
+  btnEn.classList.toggle('active', lang === 'en');
+}
+
+function openModal(i){
+  current = i;
+  renderModal();
+  backdrop.classList.add('open');
+}
+function closeModal(){ backdrop.classList.remove('open'); }
+function step(delta){
+  current = (current + delta + DATA.length) % DATA.length;
+  renderModal();
+}
+
+document.getElementById('modalClose').addEventListener('click', closeModal);
+document.getElementById('modalPrev').addEventListener('click', () => step(-1));
+document.getElementById('modalNext').addEventListener('click', () => step(1));
+btnEs.addEventListener('click', () => { lang = 'es'; renderModal(); });
+btnEn.addEventListener('click', () => { lang = 'en'; renderModal(); });
+backdrop.addEventListener('click', (e) => { if(e.target === backdrop) closeModal(); });
+document.addEventListener('keydown', (e) => {
+  if(!backdrop.classList.contains('open')) return;
+  if(e.key === 'Escape') closeModal();
+  if(e.key === 'ArrowRight') step(1);
+  if(e.key === 'ArrowLeft') step(-1);
+});
 </script>
+
 </body>
 </html>
